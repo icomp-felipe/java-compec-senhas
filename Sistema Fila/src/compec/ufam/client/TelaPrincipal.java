@@ -4,9 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
+
+import com.phill.libs.ui.AlertDialog;
+import com.phill.libs.ui.GraphicsHelper;
+
 import compec.ufam.io.*;
 import compec.ufam.model.*;
-import compec.ufam.utils.*;
 
 public class TelaPrincipal extends JFrame implements ActionListener {
 
@@ -19,9 +22,9 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 	public TelaPrincipal(String user, Senha senha, IOClient ioClient) {
 		super("Sistema de Senhas");
 		
-		Font  fonte = GraphicsHelper.getFont();
-		Font  font1 = GraphicsHelper.getFont(25);
-		Color color = GraphicsHelper.getColor();
+		Font  fonte = GraphicsHelper.getInstance().getFont();
+		Font  font1 = GraphicsHelper.getInstance().getFont(25);
+		Color color = GraphicsHelper.getInstance().getColor();
 		
 		this.senhaAtual = senha;
 		this.ioClient = ioClient;
@@ -38,7 +41,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 		getContentPane().add(labelTitulo);
 		
 		JPanel painelChamada = new JPanel();
-		painelChamada.setBorder(GraphicsHelper.getTitledBorder("Última Chamada"));
+		painelChamada.setBorder(GraphicsHelper.getInstance().getTitledBorder("Última Chamada"));
 		painelChamada.setBounds(10, 55, 324, 63);
 		getContentPane().add(painelChamada);
 		painelChamada.setLayout(null);
@@ -83,7 +86,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 	/** Sinaliza a desconexão do servidor */
 	public void semConexao(IOException exception) {
-		AlertDialog.erro("Erro de Conexão", exception.getMessage());
+		AlertDialog.error("Erro de Conexão", exception.getMessage());
 		dispose();
 	}
 	

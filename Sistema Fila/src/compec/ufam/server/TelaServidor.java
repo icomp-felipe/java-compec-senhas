@@ -9,6 +9,12 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 
+import com.phill.libs.PropertiesManager;
+import com.phill.libs.ResourceManager;
+import com.phill.libs.ui.AlertDialog;
+import com.phill.libs.ui.GraphicsHelper;
+import com.phill.libs.ui.JPaintedPanel;
+
 import compec.ufam.io.*;
 import compec.ufam.model.*;
 import compec.ufam.utils.*;
@@ -43,10 +49,10 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 		
 		Dimension dimension = GraphicsHelper.getScreenSize();
 		
-		Font fonte = GraphicsHelper.getFont(DimensionManager.getHeigthScale(dimension,19.0));
-		Font texts = GraphicsHelper.getFont(DimensionManager.getHeigthScale(dimension,30.0));
+		Font fonte = GraphicsHelper.getInstance().getFont(DimensionManager.getHeigthScale(dimension,19.0));
+		Font texts = GraphicsHelper.getInstance().getFont(DimensionManager.getHeigthScale(dimension,30.0));
 		
-		JPanel painelPrincipal = new JPaintedPanel("img/background.jpg");
+		JPanel painelPrincipal = new JPaintedPanel("img/background.jpg",dimension);
 		setContentPane(painelPrincipal);
 		painelPrincipal.setLayout(new BorderLayout());
 		
@@ -148,8 +154,8 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 	/*********************************************************************************************/
 	
 	private void carregaHistorico() {
-		int senha = ServerHistory.getPropertyAsInteger("senha.atual");
-		int mesa  = ServerHistory.getPropertyAsInteger("mesa.atual");
+		int senha = PropertiesManager.getInt("senha.atual","config/server.properties");
+		int mesa  = PropertiesManager.getInt("mesa.atual","config/server.properties");
 		
 		this.senhaAtual = new Senha(new Mesa(mesa),senha);
 	}
@@ -158,8 +164,8 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 		int senha = senhaAtual.getSenhaAsInteger();
 		int mesa  = senhaAtual.getMesaAsInteger();
 		
-		ServerHistory.setProperty("senha.atual", senha);
-		ServerHistory.setProperty("mesa.atual" , mesa );
+		PropertiesManager.setInt("senha.atual", senha ,"config/server.properties");
+		PropertiesManager.setInt("mesa.atual" , mesa ,"config/server.properties");
 	}
 	
 	public void addCliente(Cliente cliente) {
@@ -218,10 +224,10 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 				new IOServer(socket.accept(), this);
 		}
 		catch (BindException exception) {
-			AlertDialog.erro("Bind Exception", exception.getMessage());
+			AlertDialog.error("Bind Exception", exception.getMessage());
 		}
 		catch (IOException exception) {
-			AlertDialog.erro("I/O Exception", exception.getMessage());
+			AlertDialog.error("I/O Exception", exception.getMessage());
 		}
 	}
 	
@@ -240,7 +246,7 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 		this.senhaAtual = new Senha(new Mesa(mesaID),senhaN);
 		
 		salvaHistorico();
-		AlertDialog.playAudio();
+		ResourceManager.playAudio("audio/msn.wav");
 		broadcastSenha(IP);
 		atualizaView();
 	}
@@ -320,8 +326,8 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 
 	private void exibeIP() {
 		
-		try { AlertDialog.informativo("Server IP", IOModel.getLocalIP()); }
-		catch (UnknownHostException exception) { AlertDialog.erro("Falha ao obter o endereço IP!"); }
+		try { AlertDialog.info("Server IP", IOModel.getLocalIP()); }
+		catch (UnknownHostException exception) { AlertDialog.error("Falha ao obter o endereço IP!"); }
 		
 	}
 
@@ -332,7 +338,7 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 	}
 
 	public void chamarAtencao() {
-		AlertDialog.playAudio();
+		ResourceManager.playAudio("audio/msn.wav");
 	}
 	
 	private class KeyEventHandler extends KeyAdapter {

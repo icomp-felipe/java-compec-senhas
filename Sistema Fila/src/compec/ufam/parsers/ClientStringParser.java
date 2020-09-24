@@ -1,6 +1,9 @@
 package compec.ufam.parsers;
 
 import javax.swing.*;
+
+import com.phill.libs.ui.AlertDialog;
+
 import compec.ufam.client.*;
 import compec.ufam.model.*;
 import compec.ufam.utils.*;
@@ -46,7 +49,7 @@ public class ClientStringParser extends DefaultStringParser {
 	private static void respostaSolicitacao(JFrame frame, String inputStream) {
 		Senha senha = loadSenha(inputStream);
 		if (senha == null)
-			AlertDialog.erro("Falha ao ler senha atual!");
+			AlertDialog.error("Falha ao ler senha atual!");
 		else if (frame instanceof TelaPrincipal)
 			((TelaPrincipal) frame).atualizaSenha(senha);
 	}

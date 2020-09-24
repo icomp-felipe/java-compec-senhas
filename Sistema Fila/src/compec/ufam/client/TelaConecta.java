@@ -5,6 +5,12 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
+
+import com.phill.libs.PropertiesManager;
+import com.phill.libs.ResourceManager;
+import com.phill.libs.ui.AlertDialog;
+import com.phill.libs.ui.GraphicsHelper;
+
 import compec.ufam.io.*;
 import compec.ufam.model.*;
 import compec.ufam.utils.*;
@@ -27,15 +33,15 @@ public class TelaConecta extends JFrame implements ActionListener {
 	public TelaConecta() {
 		super("Sistema de Senha");
 		
-		Font  fonte = GraphicsHelper.getFont(25);
-		Font  font1 = GraphicsHelper.getFont();
-		Color color = GraphicsHelper.getColor();
+		Font  fonte = GraphicsHelper.getInstance().getFont(25);
+		Font  font1 = GraphicsHelper.getInstance().getFont();
+		Color color = GraphicsHelper.getInstance().getColor();
 		
-		Icon exitIcon  = ResourceManager.getResizedIcon("icon/exit.png",23,23);
-		Icon loginIcon = ResourceManager.getResizedIcon("icon/login.png",20,20);
-		Icon idIcon    = ResourceManager.getResizedIcon("icon/id.png",25,25);
+		Icon exitIcon  = ResourceManager.getIcon("icon/exit.png",23,23);
+		Icon loginIcon = ResourceManager.getIcon("icon/login.png",20,20);
+		Icon idIcon    = ResourceManager.getIcon("icon/id.png",25,25);
 		
-		userID = PropertiesManager.getPropertyAsString("mesa.id");
+		userID = PropertiesManager.getString("mesa.id",null);
 		
 		setSize(350,190);
 		setLocationRelativeTo(null);
@@ -54,7 +60,7 @@ public class TelaConecta extends JFrame implements ActionListener {
 		getContentPane().add(labelNumeroMesa);
 		
 		JPanel painelServidor = new JPanel();
-		painelServidor.setBorder(GraphicsHelper.getTitledBorder("Servidor"));
+		painelServidor.setBorder(GraphicsHelper.getInstance().getTitledBorder("Servidor"));
 		painelServidor.setBounds(10, 46, 332, 68);
 		getContentPane().add(painelServidor);
 		painelServidor.setLayout(null);
@@ -64,7 +70,7 @@ public class TelaConecta extends JFrame implements ActionListener {
 		labelEndereco.setBounds(10, 30, 79, 23);
 		painelServidor.add(labelEndereco);
 		
-		textEndereco = new JTextField(PropertiesManager.getPropertyAsString("server.addr"));
+		textEndereco = new JTextField(PropertiesManager.getString("server.addr",null));
 		textEndereco.setForeground(color);
 		textEndereco.setFont(font1);
 		textEndereco.setBounds(98, 30, 220, 23);
@@ -118,10 +124,10 @@ public class TelaConecta extends JFrame implements ActionListener {
 
 		if (id != null) {
 			
-			PropertiesManager.setProperty("mesa.id",id);
+			PropertiesManager.setString("mesa.id",id,null);
 			labelNumeroMesa.setText(id);
 			this.userID = id;
-			AlertDialog.informativo("Identificação trocada com sucesso!");
+			AlertDialog.info("Identificação trocada com sucesso!");
 			
 		}
 		
@@ -143,7 +149,7 @@ public class TelaConecta extends JFrame implements ActionListener {
 		String host = textEndereco.getText();
 		
 		if (host.equals("")) {
-			AlertDialog.erro("Tela de Login", "Informe o endereço do servidor!");
+			AlertDialog.error("Tela de Login", "Informe o endereço do servidor!");
 			return;
 		}
 		
@@ -154,7 +160,7 @@ public class TelaConecta extends JFrame implements ActionListener {
 			}
 			ioClient.tryLogin(userID);
 		} catch (IOException exception) {
-			AlertDialog.erro("Conexão de Rede", "Falha ao conectar ao servidor: " + host + "\nVerifique se o servidor está online!") ;
+			AlertDialog.error("Conexão de Rede", "Falha ao conectar ao servidor: " + host + "\nVerifique se o servidor está online!") ;
 			socket = null;
 			return;
 		}
@@ -162,16 +168,16 @@ public class TelaConecta extends JFrame implements ActionListener {
 	
 	/** Sinaliza a desconexão do servidor */
 	public void semConexao(IOException exception) {
-		AlertDialog.erro("Erro de Conexão", exception.getMessage());
+		AlertDialog.error("Erro de Conexão", exception.getMessage());
 	}
 	
 	/** Tratamento da resposta do servidor */
 	public void returnStatus(Senha senha) {
 		if (senha == null) {
-			AlertDialog.erro("O servidor recusou o login porque\nesta estação já está conectada!");
+			AlertDialog.error("O servidor recusou o login porque\nesta estação já está conectada!");
 		}
 		else {
-			AlertDialog.informativo("Login realizado com sucesso!");
+			AlertDialog.info("Login realizado com sucesso!");
 			new TelaPrincipal(userID, senha, ioClient);
 			dispose();
 		}

@@ -1,7 +1,6 @@
 package compec.ufam.utils;
 
 import java.io.*;
-import java.nio.file.*;
 import java.text.*;
 import java.util.*;
 
@@ -18,12 +17,6 @@ public class StringUtils {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         
         return sdf.format(cal.getTime());
-	}
-	
-	@Deprecated
-	public static String readStream(InputStream stream) throws IOException {
-		BufferedReader buffer = new BufferedReader(new InputStreamReader(stream));
-		return buffer.readLine();
 	}
 	
 	public static String readStreamBuffer(InputStream stream) throws IOException {
@@ -44,18 +37,6 @@ public class StringUtils {
 	public static double parseDouble(String valor) {
 		String tratamento = valor.replaceAll(",",".").trim();
 		return Double.parseDouble(tratamento);
-	}
-	
-	/** Retorna o diretório de trabalho atual */
-	public static String getCurrentPath() {
-		Path currentRelativePath = Paths.get("");
-		return currentRelativePath.toAbsolutePath().toString();
-	}
-	
-	/** Retorna o diretório de trabalho atual */
-	public static String getResource(String resource) {
-		String baseDirectory = getCurrentPath();
-		return (baseDirectory + "/res/" + resource);
 	}
 	
 }
