@@ -86,7 +86,7 @@ public class TelaPrincipal extends JFrame implements ActionListener {
 
 	/** Sinaliza a desconexão do servidor */
 	public void semConexao(IOException exception) {
-		AlertDialog.error("Erro de Conexão", exception.getMessage());
+		AlertDialog.error(this, "Erro de Conexão", exception.getMessage());
 		dispose();
 	}
 	

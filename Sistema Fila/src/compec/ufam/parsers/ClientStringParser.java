@@ -49,7 +49,7 @@ public class ClientStringParser extends DefaultStringParser {
 	private static void respostaSolicitacao(JFrame frame, String inputStream) {
 		Senha senha = loadSenha(inputStream);
 		if (senha == null)
-			AlertDialog.error("Falha ao ler senha atual!");
+			AlertDialog.error(null, "Falha ao ler senha atual!");
 		else if (frame instanceof TelaPrincipal)
 			((TelaPrincipal) frame).atualizaSenha(senha);
 	}

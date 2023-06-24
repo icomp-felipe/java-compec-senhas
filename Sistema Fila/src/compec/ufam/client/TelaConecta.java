@@ -26,11 +26,11 @@ public class TelaConecta extends JFrame implements ActionListener {
 	private JButton botaoID;
 	private JLabel labelNumeroMesa;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		new TelaConecta();
 	}
 
-	public TelaConecta() {
+	public TelaConecta() throws IOException {
 		super("Sistema de Senha");
 		
 		Font  fonte = GraphicsHelper.getInstance().getFont(25);
@@ -124,10 +124,10 @@ public class TelaConecta extends JFrame implements ActionListener {
 
 		if (id != null) {
 			
-			PropertiesManager.setString("mesa.id",id,null);
+			try { PropertiesManager.setString("mesa.id",id,null); } catch (Exception e) { e.printStackTrace(); }
 			labelNumeroMesa.setText(id);
 			this.userID = id;
-			AlertDialog.info("Identificação trocada com sucesso!");
+			AlertDialog.info(this, "Identificação trocada com sucesso!");
 			
 		}
 		
@@ -149,7 +149,7 @@ public class TelaConecta extends JFrame implements ActionListener {
 		String host = textEndereco.getText();
 		
 		if (host.equals("")) {
-			AlertDialog.error("Tela de Login", "Informe o endereço do servidor!");
+			AlertDialog.error(this, "Tela de Login", "Informe o endereço do servidor!");
 			return;
 		}
 		
@@ -160,7 +160,7 @@ public class TelaConecta extends JFrame implements ActionListener {
 			}
 			ioClient.tryLogin(userID);
 		} catch (IOException exception) {
-			AlertDialog.error("Conexão de Rede", "Falha ao conectar ao servidor: " + host + "\nVerifique se o servidor está online!") ;
+			AlertDialog.error(this, "Conexão de Rede", "Falha ao conectar ao servidor: " + host + "\nVerifique se o servidor está online!") ;
 			socket = null;
 			return;
 		}
@@ -168,16 +168,16 @@ public class TelaConecta extends JFrame implements ActionListener {
 	
 	/** Sinaliza a desconexão do servidor */
 	public void semConexao(IOException exception) {
-		AlertDialog.error("Erro de Conexão", exception.getMessage());
+		AlertDialog.error(this, "Erro de Conexão", exception.getMessage());
 	}
 	
 	/** Tratamento da resposta do servidor */
 	public void returnStatus(Senha senha) {
 		if (senha == null) {
-			AlertDialog.error("O servidor recusou o login porque\nesta estação já está conectada!");
+			AlertDialog.error(this, "O servidor recusou o login porque\nesta estação já está conectada!");
 		}
 		else {
-			AlertDialog.info("Login realizado com sucesso!");
+			AlertDialog.info(this, "Login realizado com sucesso!");
 			new TelaPrincipal(userID, senha, ioClient);
 			dispose();
 		}

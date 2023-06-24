@@ -45,7 +45,7 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 		this.keyListener   = new KeyEventHandler();
 		this.listaClientes = new ArrayList<Cliente>();
 		
-		carregaHistorico();
+		try { carregaHistorico(); } catch (Exception e) { e.printStackTrace(); }
 		
 		Dimension dimension = GraphicsHelper.getScreenSize();
 		
@@ -153,14 +153,14 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 	/*						BLOCO DE CONTROLE DO SISTEMA										 */
 	/*********************************************************************************************/
 	
-	private void carregaHistorico() {
+	private void carregaHistorico() throws IOException {
 		int senha = PropertiesManager.getInt("senha.atual","config/server.properties");
 		int mesa  = PropertiesManager.getInt("mesa.atual","config/server.properties");
 		
 		this.senhaAtual = new Senha(new Mesa(mesa),senha);
 	}
 	
-	private void salvaHistorico() {
+	private void salvaHistorico() throws IOException {
 		int senha = senhaAtual.getSenhaAsInteger();
 		int mesa  = senhaAtual.getMesaAsInteger();
 		
@@ -224,10 +224,10 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 				new IOServer(socket.accept(), this);
 		}
 		catch (BindException exception) {
-			AlertDialog.error("Bind Exception", exception.getMessage());
+			AlertDialog.error(this, "Bind Exception", exception.getMessage());
 		}
 		catch (IOException exception) {
-			AlertDialog.error("I/O Exception", exception.getMessage());
+			AlertDialog.error(this, "I/O Exception", exception.getMessage());
 		}
 	}
 	
@@ -245,7 +245,7 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 		
 		this.senhaAtual = new Senha(new Mesa(mesaID),senhaN);
 		
-		salvaHistorico();
+		try { salvaHistorico(); } catch (Exception e) { e.printStackTrace(); }
 		ResourceManager.playAudio("audio/msn.wav");
 		broadcastSenha(IP);
 		atualizaView();
@@ -253,7 +253,7 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 	
 	private void reiniciaContagem() {
 		this.senhaAtual = new Senha(new Mesa(0),0);
-		salvaHistorico();
+		try { salvaHistorico(); } catch (Exception e) { e.printStackTrace(); }
 		broadcastSenha("");
 		atualizaView();
 	}
@@ -326,13 +326,13 @@ public class TelaServidor extends JFrame implements ActionListener, Runnable {
 
 	private void exibeIP() {
 		
-		try { AlertDialog.info("Server IP", IOModel.getLocalIP()); }
-		catch (UnknownHostException exception) { AlertDialog.error("Falha ao obter o endereço IP!"); }
+		try { AlertDialog.info(this, "Server IP", IOModel.getLocalIP()); }
+		catch (UnknownHostException exception) { AlertDialog.error(this, "Falha ao obter o endereço IP!"); }
 		
 	}
 
 	private void reinicia() {
-		int option = AlertDialog.dialog("Você deseja realmente reinicar a contagem?");
+		int option = AlertDialog.dialog(this, "Você deseja realmente reinicar a contagem?");
 		if (option == JOptionPane.OK_OPTION)
 			reiniciaContagem();
 	}
